@@ -12,6 +12,6 @@ func GetDefaultProductConfig() *ProductConfig {
 	return &ProductConfig{
 		MaxBatchCount:    10,
 		MaxIoWorkerCount: 64,
-		LingerMs:         20,
+		LingerMs:         2000,
 	}
 }
