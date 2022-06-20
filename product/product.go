@@ -1,8 +1,8 @@
 package product
 
 import (
-	"jk/dao"
-	jkinterface "jk/interface"
+	"jt/dao"
+	jkinterface "jt/interface"
 	"sync"
 )
 
