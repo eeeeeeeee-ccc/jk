@@ -5,7 +5,7 @@
 
 #### 安装教程
 
-1. go get github.com/eeeeeeeee-ccc/jk
+1. go get github.com/eeeeeeeee-ccc/jt
 
 
 #### 使用说明
