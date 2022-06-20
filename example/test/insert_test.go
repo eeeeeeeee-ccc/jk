@@ -3,9 +3,9 @@ package test
 import (
 	"fmt"
 	"io/ioutil"
-	product "jk"
-	jkinterface "jk/interface"
-	Kv "jk/model/kv"
+	jkinterface "jt/interface"
+	Kv "jt/model/kv"
+	"jt/product"
 	"os"
 	"os/signal"
 	"strings"

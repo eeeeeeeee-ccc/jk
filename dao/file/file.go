@@ -1,8 +1,8 @@
 package file
 
 import (
-	jkinterface "jk/interface"
-	Kv "jk/model/kv"
+	jkinterface "jt/interface"
+	Kv "jt/model/kv"
 	"os"
 	"strings"
 )

@@ -1,7 +1,7 @@
 package product
 
 import (
-	jkinterface "jk/interface"
+	jkinterface "jt/interface"
 	"sync"
 )
 
