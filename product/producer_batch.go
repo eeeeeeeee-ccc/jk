@@ -2,7 +2,7 @@ package product
 
 import (
 	"sync"
-	"jt/model/kv"
+	"github.com/eeeeeeeee-ccc/jt/model/kv"
 	"time"
 )
 

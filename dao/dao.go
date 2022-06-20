@@ -1,9 +1,9 @@
 package dao
 
 import (
-	"jt/dao/file"
-	"jt/dao/mongo"
-	jkinterface "jt/interface"
+	"github.com/eeeeeeeee-ccc/jt/dao/file"
+	"github.com/eeeeeeeee-ccc/jt/dao/mongo"
+	jkinterface "github.com/eeeeeeeee-ccc/jt/interface"
 )
 
 var DaoEnglineMap = map[string]func(ExtMap map[string]string) jkinterface.ProductClientInterface{

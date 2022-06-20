@@ -2,7 +2,7 @@ package product
 
 import (
 	uberatomic "go.uber.org/atomic"
-	Kv "jt/model/kv"
+	Kv "github.com/eeeeeeeee-ccc/jt/model/kv"
 	"strings"
 	"sync"
 	"time"

@@ -1,8 +1,8 @@
 package file
 
 import (
-	jkinterface "jt/interface"
-	Kv "jt/model/kv"
+	jkinterface "github.com/eeeeeeeee-ccc/jt/interface"
+	Kv "github.com/eeeeeeeee-ccc/jt/model/kv"
 	"os"
 	"strings"
 )

@@ -2,7 +2,7 @@ package product
 
 import (
 	"go.uber.org/atomic"
-	"jt/util"
+	"github.com/eeeeeeeee-ccc/jt/util"
 	"log"
 	"sync"
 	"time"

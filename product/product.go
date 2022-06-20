@@ -1,8 +1,8 @@
 package product
 
 import (
-	"jt/dao"
-	jkinterface "jt/interface"
+	"github.com/eeeeeeeee-ccc/jt/dao"
+	jkinterface "github.com/eeeeeeeee-ccc/jt/interface"
 	"sync"
 )
 

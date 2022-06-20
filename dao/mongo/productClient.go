@@ -6,8 +6,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	jkinterface "jt/interface"
-	Kv "jt/model/kv"
+	jkinterface "github.com/eeeeeeeee-ccc/jt/interface"
+	Kv "github.com/eeeeeeeee-ccc/jt/model/kv"
 	"log"
 	"time"
 )
