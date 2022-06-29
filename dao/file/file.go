@@ -14,12 +14,11 @@ func New(ExtMap map[string]string)jkinterface.ProductClientInterface{
 	return new(fL)
 }
 
-func (f *fL) PutCollection(project, setName string, group *Kv.CollectionGroup,extMap map[string]string) {
+func (f *fL) PutCollection(project, setName string, group *Kv.CollectionGroup,extMap map[string]string)error {
 	var path string
 	path =extMap["path"]
 	if len(group.Collections) == 0 {
-		// empty log group
-		return
+		return nil
 	}
 	subArr := []string{}
 	for _, item := range group.Collections {
@@ -29,15 +28,15 @@ func (f *fL) PutCollection(project, setName string, group *Kv.CollectionGroup,ex
 		}
 		subArr = append(subArr, e)
 	}
-	b:=strings.Join(subArr,"\n")+"\n"
-	fl, err := os.OpenFile(path, os.O_APPEND|os.O_CREATE, 0644)
+	fileContent:=strings.Join(subArr,"\n")+"\n"
+	fileD, err := os.OpenFile(path, os.O_APPEND|os.O_CREATE, 0644)
 	if err != nil {
-		return
+		return nil
 	}
-	defer fl.Close()
-	_, err = fl.Write([]byte(b))
+	defer fileD.Close()
+	_, err = fileD.Write([]byte(fileContent))
 	if err != nil {
 		panic(err)
 	}
-	return
+	return err
 }

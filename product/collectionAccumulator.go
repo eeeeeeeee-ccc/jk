@@ -68,10 +68,10 @@ func (collectionAccumulator *CollectionAccumulator) innerSendToServer(key string
 
 func (collectionAccumulator *CollectionAccumulator)createNewProducerBatch(kv interface{},key,project, setName string){
 	if mkv, ok := kv.(*Kv.Kv); ok {
-		newProducerBatch := initProducerBatch(mkv, project, setName)
+		newProducerBatch := initProducerBatch(mkv, project, setName,collectionAccumulator.productConfig)
 		collectionAccumulator.CollectionGroupData[key] = newProducerBatch
 	} else if mkvList, ok := kv.([]*Kv.Kv); ok {
-		newProducerBatch := initProducerBatch(mkvList, project, setName)
+		newProducerBatch := initProducerBatch(mkvList, project, setName,collectionAccumulator.productConfig)
 		collectionAccumulator.CollectionGroupData[key] = newProducerBatch
 	}
 }

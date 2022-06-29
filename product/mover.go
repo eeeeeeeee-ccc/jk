@@ -1,8 +1,8 @@
 package product
 
 import (
-	"go.uber.org/atomic"
 	"github.com/eeeeeeeee-ccc/jt/util"
+	"go.uber.org/atomic"
 	"log"
 	"sync"
 	"time"
@@ -14,14 +14,16 @@ type Mover struct {
 	collectionAccumulator *CollectionAccumulator
 	logger                log.Logger
 	threadPool            *IoWorkerPool
+	retryQueue            *RetryQueue
 }
 
-func initMover(collectionAccumulator *CollectionAccumulator, ioWorker *IoWorker, threadPool *IoWorkerPool) *Mover {
+func initMover(collectionAccumulator *CollectionAccumulator, ioWorker *IoWorker, threadPool *IoWorkerPool, retryQueue *RetryQueue) *Mover {
 	mover := &Mover{
 		moverShutDownFlag:     atomic.NewBool(false),
 		ioWorker:              ioWorker,
 		collectionAccumulator: collectionAccumulator,
 		threadPool:            threadPool,
+		retryQueue:            retryQueue,
 	}
 	return mover
 }
@@ -49,7 +51,16 @@ func (mover *Mover) run(moverWaitGroup *sync.WaitGroup, config *ProductConfig) {
 			//level.Debug(mover.logger).Log("msg", "No data time in map waiting for user configured RemainMs parameter values")
 			sleepMs = config.LingerMs
 		}
-		time.Sleep(time.Duration(sleepMs) * time.Millisecond)
+		retryProducerBatchList := mover.retryQueue.getRetryBatch(mover.moverShutDownFlag.Load())
+		if retryProducerBatchList == nil {
+			// If there is nothing to send in the retry queue, just wait for the minimum time that was given to me last time.
+			time.Sleep(time.Duration(sleepMs) * time.Millisecond)
+		} else {
+			count := len(retryProducerBatchList)
+			for i := 0; i < count; i++ {
+				mover.threadPool.addTask(retryProducerBatchList[i])
+			}
+		}
 	}
 	mover.collectionAccumulator.lock.Lock()
 	for _, batch := range mover.collectionAccumulator.CollectionGroupData {

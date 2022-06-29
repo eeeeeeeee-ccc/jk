@@ -1,11 +1,12 @@
 package test
 
 import (
+	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	jkinterface "github.com/eeeeeeeee-ccc/jt/interface"
 	Kv "github.com/eeeeeeeee-ccc/jt/model/kv"
 	"github.com/eeeeeeeee-ccc/jt/product"
+	"io/ioutil"
 	"os"
 	"os/signal"
 	"strings"
@@ -88,7 +89,7 @@ func TestInsert(t *testing.T) {
 	Product.SendCollection("HallofFame","celebrityBiography",result)
 	for i := 0; i < 5; i++ {
 		go func(id int) {
-			for i := 0; i < 10; i++ {
+			for i := 0; i < 1; i++ {
 				Product.SendCollection("project", "logstore",  GetSubArr())
 			}
 			fmt.Println("All data in the queue has been sent, goroutine id:", id)
@@ -218,12 +219,12 @@ func New()jkinterface.ProductClientInterface{
 	return new(fL)
 }
 
-func (f *fL) PutCollection(project, setName string, group *Kv.CollectionGroup,extMap map[string]string) {
+func (f *fL) PutCollection(project, setName string, group *Kv.CollectionGroup,extMap map[string]string)error {
 	var path string
 	path =extMap["path"]
 	if len(group.Collections) == 0 {
 		// empty log group
-		return
+		return nil
 	}
 	subArr := []string{}
 	for _, item := range group.Collections {
@@ -236,12 +237,35 @@ func (f *fL) PutCollection(project, setName string, group *Kv.CollectionGroup,ex
 	b:=strings.Join(subArr,"\n")+"\n"
 	fl, err := os.OpenFile(path, os.O_APPEND|os.O_CREATE, 0644)
 	if err != nil {
-		return
+		return err
 	}
 	defer fl.Close()
 	_, err = fl.Write([]byte(b))
 	if err != nil {
 		panic(err)
 	}
-	return
+	return err
+}
+
+
+type A struct{
+	Name string `json:"name"`
+	Age  int `json:"age"`
+}
+
+
+func(a A)StringT(){
+	b, err := json.MarshalIndent(a, "", "    ")
+	if err != nil {
+	}
+	fmt.Println(string(b))
+}
+
+func TestT(t *testing.T){
+	a:=A{
+		Name: "小明",
+		Age:  20,
+	}
+	b:=a.StringT
+	b()
 }

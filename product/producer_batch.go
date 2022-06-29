@@ -1,38 +1,45 @@
 package product
 
 import (
-	"sync"
 	"github.com/eeeeeeeee-ccc/jt/model/kv"
+	"sync"
 	"time"
 )
 
 type ProductBatch struct {
-	CollectionGroup *Kv.CollectionGroup `json:"collection_group"`
-	TotalNum        int64            //最多10个
-	lock            sync.RWMutex
-	project         string
-	set             string
-	createTimeMs    int64
+	CollectionGroup      *Kv.CollectionGroup `json:"collection_group"`
+	TotalNum             int64               //最多10个
+	lock                 sync.RWMutex
+	project              string
+	set                  string
+	createTimeMs         int64
+	nextRetryMs          int64
+	attemptCount         int
+	maxRetryTimes        int
+	baseRetryBackoffMs   int64
+	maxRetryIntervalInMs int64
 }
 
-
-
-func initProducerBatch(kv interface{},project, setName string)*ProductBatch{
+func initProducerBatch(kv interface{}, project, setName string, config *ProductConfig) *ProductBatch {
 	collections := []*Kv.Kv{}
 	if log, ok := kv.(*Kv.Kv); ok {
 		collections = append(collections, log)
 	} else if logList, ok := kv.([]*Kv.Kv); ok {
 		collections = append(collections, logList...)
 	}
-	collectionGroup :=&Kv.CollectionGroup{
-		Collections:   collections,
+	collectionGroup := &Kv.CollectionGroup{
+		Collections: collections,
 	}
 	productBatch := &ProductBatch{
-		CollectionGroup: collectionGroup,
-		TotalNum:        10,
-		project:         project,
-		set:             setName,
-		createTimeMs:    time.Now().UnixNano()/1e6,
+		CollectionGroup:      collectionGroup,
+		TotalNum:             10,
+		project:              project,
+		attemptCount:         0,
+		set:                  setName,
+		createTimeMs:         time.Now().UnixNano() / 1e6,
+		maxRetryTimes:        config.Retries,
+		maxRetryIntervalInMs: config.MaxRetryBackoffMs,
+		baseRetryBackoffMs:   config.BaseRetryBackoffMs,
 	}
 	return productBatch
 }
@@ -42,7 +49,6 @@ func (productBatch *ProductBatch) getLogGroupCount() int {
 	productBatch.lock.RLock()
 	return len(productBatch.CollectionGroup.GetLogs())
 }
-
 
 func (productBatch *ProductBatch) addLogToLogGroup(kv interface{}) {
 	defer productBatch.lock.Unlock()

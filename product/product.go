@@ -31,11 +31,13 @@ func InitProduct(productConfig *ProductConfig,engine string,injectionEngine jkin
 	}else{
 		client=dao.ChooseEngine(engine,productConfig.ExtMap)
 	}
-	ioWorker:=initIoWorker(client,productConfig.MaxIoWorkerCount,product)
+	retryQueue := initRetryQueue()
+
+	ioWorker:=initIoWorker(client,productConfig.MaxIoWorkerCount,product,retryQueue)
 	threadPool:=initIoWorkerPool(ioWorker)
 
 	collectionAccumulator:=initCollectionAccumulator(threadPool,product,productConfig)
-	mover := initMover(collectionAccumulator, ioWorker,  threadPool)
+	mover := initMover(collectionAccumulator, ioWorker,  threadPool,retryQueue)
 	product.threadPool=threadPool
 	product.collectionAccumulator=collectionAccumulator
 	product.ioThreadPoolWaitGroup= &sync.WaitGroup{}

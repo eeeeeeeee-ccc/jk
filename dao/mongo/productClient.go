@@ -3,11 +3,12 @@ package mongo
 import (
 	"context"
 	"fmt"
+	jkinterface "github.com/eeeeeeeee-ccc/jt/interface"
+	Err "github.com/eeeeeeeee-ccc/jt/model/client_err"
+	Kv "github.com/eeeeeeeee-ccc/jt/model/kv"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	jkinterface "github.com/eeeeeeeee-ccc/jt/interface"
-	Kv "github.com/eeeeeeeee-ccc/jt/model/kv"
 	"log"
 	"time"
 )
@@ -36,10 +37,16 @@ func New(ExtMap map[string]string) jkinterface.ProductClientInterface{
 
 
 
-func (m *MogClient)PutCollection(project, setName string,group *Kv.CollectionGroup,extMap map[string]string){
+func (m *MogClient)PutCollection(project, setName string,group *Kv.CollectionGroup,extMap map[string]string)error{
+	var errs Err.Error
 	if len(group.Collections) == 0 {
 		// empty log group
-		return
+		errs=Err.Error{
+			HttpCode: 0,
+			Code:     1,
+			Msg:      "mongodb 批次内容为空>>",
+		}
+		return errs
 	}
 	coll:=m.Client.Database(project).Collection(setName)
 	subArr:=[]interface{}{}
@@ -55,8 +62,13 @@ func (m *MogClient)PutCollection(project, setName string,group *Kv.CollectionGro
 		subArr=append(subArr,bD)
 	}
 	_, err := coll.InsertMany(context.TODO(), subArr)
-	if err != nil {
-		panic(err)
+	if err!=nil{
+		errs=Err.Error{
+			HttpCode: 0,
+			Code:     1,
+			Msg:      "mongodb 提交错误>>"+err.Error(),
+		}
 	}
+	return errs
 }
 
